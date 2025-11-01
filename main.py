@@ -787,6 +787,14 @@ def main(page: ft.Page):
         content_area.controls.clear()
         content_area.controls.append(crear_formulario_usuario("Editar Usuario", editar_usuario_handler, True))
         page.update()
+
+    def cancelar_edicion_usuario(e=None):
+        """Cancela la edición/agregado de usuario y vuelve a la gestión de usuarios."""
+        nonlocal usuario_editando
+        usuario_editando = None
+        limpiar_formulario_usuario()
+        mostrar_gestion_usuarios()
+        page.update()
     
     def crear_formulario_usuario(titulo, handler_func, es_edicion=False):
         return ft.Container(
@@ -833,7 +841,7 @@ def main(page: ft.Page):
                                 "Cancelar",
                                 icon=ft.Icons.ARROW_BACK,
                                 style=ft.ButtonStyle(padding=15),
-                                on_click=mostrar_gestion_usuarios
+                                on_click=cancelar_edicion_usuario
                             )
                         ], spacing=20),
                         
