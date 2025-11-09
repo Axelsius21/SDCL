@@ -907,17 +907,7 @@ def main(page: ft.Page):
                                 width=300
                             ),
                             
-                            ft.Container(
-                                content=ft.Column([
-                                    ft.Text("Credenciales por defecto:", weight=ft.FontWeight.BOLD),
-                                    ft.Text("Usuario: admin"),
-                                    ft.Text("Contraseña: admin123"),
-                                ]),
-                                padding=20,
-                                bgcolor=ft.Colors.YELLOW_50,
-                                border_radius=8,
-                                margin=20
-                            ),
+                            
                             
                             ft.Container(
                                 content=login_mensaje,
