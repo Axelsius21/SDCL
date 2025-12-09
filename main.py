@@ -374,10 +374,21 @@ def main(page: ft.Page):
         fill_color=ft.Colors.WHITE
     )
     
-    textfield_curso = ft.TextField(
-        label="Curso/Materia",
-        hint_text="Ingrese nombre del curso",
-        width=400,
+    # Separar Curso (año) y Materia
+    dropdown_curso_ano = ft.Dropdown(
+        label="Curso (Año)",
+        hint_text="Seleccione año",
+        options=[ft.dropdown.Option(v) for v in ["1°","2°","3°","4°","5°"]],
+        width=200,
+        border_color=ft.Colors.BLUE_400,
+        filled=True,
+        fill_color=ft.Colors.WHITE
+    )
+
+    textfield_materia = ft.TextField(
+        label="Materia",
+        hint_text="Ingrese nombre de la materia",
+        width=250,
         border_color=ft.Colors.BLUE_400,
         filled=True,
         fill_color=ft.Colors.WHITE
@@ -419,7 +430,7 @@ def main(page: ft.Page):
         fill_color=ft.Colors.WHITE
     )
     
-    mensaje_texto = ft.Text("", color=ft.Colors.GREEN)
+    mensaje_texto = ft.Text("", color=ft.Colors.GREEN, visible=False)
     
     # ========== CONTROLES PARA LA VISTA DE EDICIÓN ==========
     
@@ -458,9 +469,18 @@ def main(page: ft.Page):
         fill_color=ft.Colors.WHITE
     )
     
-    edit_textfield_curso = ft.TextField(
-        label="Curso/Materia",
-        width=400,
+    edit_dropdown_curso_ano = ft.Dropdown(
+        label="Curso (Año)",
+        options=[ft.dropdown.Option(v) for v in ["1°","2°","3°","4°","5°"]],
+        width=200,
+        border_color=ft.Colors.BLUE_400,
+        filled=True,
+        fill_color=ft.Colors.WHITE
+    )
+
+    edit_textfield_materia = ft.TextField(
+        label="Materia",
+        width=250,
         border_color=ft.Colors.BLUE_400,
         filled=True,
         fill_color=ft.Colors.WHITE
@@ -534,6 +554,7 @@ def main(page: ft.Page):
         
         # Botones de módulos
         modulos = [
+            {"icon": ft.Icons.HOME, "label": "Inicio", "view": mostrar_bienvenida},
             {"icon": ft.Icons.ADD_BOX, "label": "Nueva Reserva", "view": mostrar_nueva_reserva},
             {"icon": ft.Icons.LIST_ALT, "label": "Ver Reservas", "view": mostrar_reservas},
         ]
@@ -640,7 +661,7 @@ def main(page: ft.Page):
             login_mensaje.value = ""
             # Actualizar la interfaz para mostrar los módulos
             actualizar_interfaz_principal()
-            mostrar_nueva_reserva()
+            mostrar_bienvenida()
         else:
             login_mensaje.value = "Usuario o contraseña incorrectos"
             login_mensaje.color = ft.Colors.RED
@@ -925,6 +946,123 @@ def main(page: ft.Page):
             )
         )
         page.update()
+
+        # ========== SE MUESTRA LA BIENVENIDA AL SISTEMA CON OPCIONES RAPIDAS ==========
+    
+    def mostrar_bienvenida():
+        """Muestra la página de bienvenida al sistema"""
+        if not usuario_autenticado:
+            mostrar_login()
+            return
+        
+        nonlocal current_view
+        current_view = "bienvenida"
+        
+        content_area.controls.clear()
+        content_area.controls.append(
+            ft.Container(
+                content=ft.Column([
+                    ft.Card(
+                        content=ft.Container(
+                            content=ft.Column([
+                                ft.Container(
+                                    content=ft.Icon(ft.Icons.COMPUTER, size=80, color=ft.Colors.BLUE_700),
+                                    alignment=ft.alignment.center,
+                                    padding=20
+                                ),
+                                ft.Text(
+                                    "Bienvenido al Sistema de Reserva de Laboratorio",
+                                    size=26,
+                                    weight=ft.FontWeight.BOLD,
+                                    text_align=ft.TextAlign.CENTER,
+                                    color=ft.Colors.BLUE_900
+                                ),
+                                ft.Text(
+                                    f"¡Hola {usuario_autenticado[3]}!",
+                                    size=18,
+                                    text_align=ft.TextAlign.CENTER,
+                                    color=ft.Colors.GREY_700
+                                ),
+                                ft.Container(height=30),
+                                ft.Text(
+                                    "Gestiona tus reservas del laboratorio de informática de manera fácil y rápida.",
+                                    size=16,
+                                    text_align=ft.TextAlign.CENTER,
+                                    color=ft.Colors.GREY_600
+                                ),
+                                ft.Container(height=40),
+                                ft.Column([
+                                    ft.Text("¿Qué deseas hacer?", 
+                                           size=18, 
+                                           weight=ft.FontWeight.BOLD,
+                                           color=ft.Colors.BLUE_800),
+                                    ft.Container(height=15),
+                                    ft.ElevatedButton(
+                                        content=ft.Row([
+                                            ft.Icon(ft.Icons.ADD_CIRCLE, size=24),
+                                            ft.Text("Nueva Reserva", size=16, weight=ft.FontWeight.BOLD),
+                                        ], alignment=ft.MainAxisAlignment.CENTER),
+                                        style=ft.ButtonStyle(
+                                            color=ft.Colors.WHITE,
+                                            bgcolor=ft.Colors.GREEN_600,
+                                            padding=20,
+                                            text_style=ft.TextStyle(size=16)
+                                        ),
+                                        on_click=lambda e: mostrar_nueva_reserva(),
+                                        width=400,
+                                        height=60
+                                    ),
+                                    ft.Container(height=15),
+                                    ft.ElevatedButton(
+                                        content=ft.Row([
+                                            ft.Icon(ft.Icons.LIST_ALT, size=24),
+                                            ft.Text("Ver Mis Reservas", size=16, weight=ft.FontWeight.BOLD),
+                                        ], alignment=ft.MainAxisAlignment.CENTER),
+                                        style=ft.ButtonStyle(
+                                            color=ft.Colors.WHITE,
+                                            bgcolor=ft.Colors.BLUE_600,
+                                            padding=20,
+                                            text_style=ft.TextStyle(size=16)
+                                        ),
+                                        on_click=lambda e: mostrar_reservas(),
+                                        width=400,
+                                        height=60
+                                    ),
+                                    ft.Container(height=15),
+                                    ft.ElevatedButton(
+                                        content=ft.Row([
+                                            ft.Icon(ft.Icons.INFO, size=24),
+                                            ft.Text("Información del Sistema", size=16, weight=ft.FontWeight.BOLD),
+                                        ], alignment=ft.MainAxisAlignment.CENTER),
+                                        style=ft.ButtonStyle(
+                                            color=ft.Colors.WHITE,
+                                            bgcolor=ft.Colors.ORANGE_600,
+                                            padding=20,
+                                            text_style=ft.TextStyle(size=16)
+                                        ),
+                                        on_click=lambda e: mostrar_informacion(),
+                                        width=400,
+                                        height=60
+                                    ),
+                                ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, spacing=10),
+                                ft.Container(height=40),
+                                ft.Text(
+                                    
+                                    size=12,
+                                    text_align=ft.TextAlign.CENTER,
+                                    color=ft.Colors.GREY_500
+                                ),
+                            ], horizontal_alignment=ft.CrossAxisAlignment.CENTER),
+                            padding=40
+                        ),
+                        elevation=3
+                    )
+                ], expand=True),
+                padding=20,
+                expand=True
+            )
+        )
+        page.update()
     
     def mostrar_gestion_usuarios():
         if not usuario_autenticado or usuario_autenticado[4] != 'admin':
@@ -1070,7 +1208,8 @@ def main(page: ft.Page):
         dropdown_turno.value = None
         textfield_docente.value = ""
         dropdown_carrera.value = None
-        textfield_curso.value = ""
+        dropdown_curso_ano.value = None
+        textfield_materia.value = ""
         textfield_horario.value = ""
         radio_periodo.value = None
         datepicker_inicio.value = ""
@@ -1078,64 +1217,88 @@ def main(page: ft.Page):
         datepicker_inicio.visible = False
         datepicker_fin.visible = False
         mensaje_texto.value = ""
+        mensaje_texto.visible = False
         page.update()
     
     def agregar_reserva_handler(e):
+        # Validaciones básicas de campos obligatorios
         if not all([
             dropdown_dia.value,
             dropdown_turno.value,
             textfield_docente.value.strip(),
             dropdown_carrera.value,
-            textfield_curso.value.strip(),
+            dropdown_curso_ano.value,
+            textfield_materia.value.strip(),
             textfield_horario.value.strip(),
             radio_periodo.value
         ]):
             mensaje_texto.value = "❌ Por favor complete todos los campos obligatorios"
             mensaje_texto.color = ft.Colors.RED
+            mensaje_texto.visible = True
             page.update()
             return
-        
+
+        # Manejo de período
+        fecha_inicio = None
+        fecha_fin = None
         if radio_periodo.value == "fechas":
             if not datepicker_inicio.value.strip() or not datepicker_fin.value.strip():
                 mensaje_texto.value = "❌ Para período con fechas específicas, complete ambas fechas"
                 mensaje_texto.color = ft.Colors.RED
+                mensaje_texto.visible = True
                 page.update()
                 return
-            
+
             try:
-                datetime.strptime(datepicker_inicio.value, "%Y-%m-%d")
-                datetime.strptime(datepicker_fin.value, "%Y-%m-%d")
+                # Validar formato
+                fecha_inicio_dt = datetime.strptime(datepicker_inicio.value, "%Y-%m-%d").date()
+                fecha_fin_dt = datetime.strptime(datepicker_fin.value, "%Y-%m-%d").date()
             except ValueError:
                 mensaje_texto.value = "❌ Formato de fecha incorrecto. Use YYYY-MM-DD"
-                mensaje_texto.color =ft.Colors.RED
+                mensaje_texto.color = ft.Colors.RED
+                mensaje_texto.visible = True
                 page.update()
                 return
-        
-        fecha_inicio = datepicker_inicio.value if radio_periodo.value == "fechas" else None
-        fecha_fin = datepicker_fin.value if radio_periodo.value == "fechas" else None
+
+            if fecha_fin_dt < fecha_inicio_dt:
+                mensaje_texto.value = "❌ La fecha de fin no puede ser anterior a la fecha de inicio"
+                mensaje_texto.color = ft.Colors.RED
+                mensaje_texto.visible = True
+                page.update()
+                return
+
+            fecha_inicio = fecha_inicio_dt.isoformat()
+            fecha_fin = fecha_fin_dt.isoformat()
+
         periodo_texto = "Todo el semestre" if radio_periodo.value == "semestre" else f"{fecha_inicio} a {fecha_fin}"
-        
+
+        # Combinar curso año y materia para guardar en la columna 'curso'
+        curso_combined = f"{dropdown_curso_ano.value} - {textfield_materia.value.strip()}"
+
+        # Intentar guardar
         try:
             app.agregar_reserva(
                 dia=dropdown_dia.value,
                 turno=dropdown_turno.value,
-                docente=textfield_docente.value,
+                docente=textfield_docente.value.strip(),
                 carrera=dropdown_carrera.value,
-                curso=textfield_curso.value,
-                horario=textfield_horario.value,
+                curso=curso_combined,
+                horario=textfield_horario.value.strip(),
                 periodo=periodo_texto,
                 fecha_inicio=fecha_inicio,
                 fecha_fin=fecha_fin
             )
-            
+
             mensaje_texto.value = "✅ Reserva agregada exitosamente!"
             mensaje_texto.color = ft.Colors.GREEN
+            mensaje_texto.visible = True
             limpiar_formulario(e)
             page.update()
-            
+
         except Exception as ex:
             mensaje_texto.value = f"❌ Error al guardar: {str(ex)}"
             mensaje_texto.color = ft.Colors.RED
+            mensaje_texto.visible = True
             page.update()
 
     def eliminar_reserva_handler(reserva_id):
@@ -1144,10 +1307,12 @@ def main(page: ft.Page):
         if exito:
             mensaje_texto.value = f"✅ Reserva eliminada exitosamente!"
             mensaje_texto.color = ft.Colors.GREEN
+            mensaje_texto.visible = True
             mostrar_reservas()
         else:
             mensaje_texto.value = f"❌ Error al eliminar la reserva"
             mensaje_texto.color = ft.Colors.RED
+            mensaje_texto.visible = True
         
         page.update()
     
@@ -1162,12 +1327,14 @@ def main(page: ft.Page):
             edit_dropdown_turno.value,
             edit_textfield_docente.value.strip(),
             edit_dropdown_carrera.value,
-            edit_textfield_curso.value.strip(),
+            edit_dropdown_curso_ano.value,
+            edit_textfield_materia.value.strip(),
             edit_textfield_horario.value.strip(),
             edit_radio_periodo.value
         ]):
             mensaje_texto.value = "❌ Por favor complete todos los campos obligatorios"
             mensaje_texto.color = ft.Colors.RED
+            mensaje_texto.visible = True
             page.update()
             return
         
@@ -1175,7 +1342,9 @@ def main(page: ft.Page):
             if not edit_datepicker_inicio.value.strip() or not edit_datepicker_fin.value.strip():
                 mensaje_texto.value = "❌ Para período con fechas específicas, complete ambas fechas"
                 mensaje_texto.color = ft.Colors.RED
+                mensaje_texto.visible = True
                 page.update()
+                return
                 return
             
             try:
@@ -1184,12 +1353,15 @@ def main(page: ft.Page):
             except ValueError:
                 mensaje_texto.value = "❌ Formato de fecha incorrecto. Use YYYY-MM-DD"
                 mensaje_texto.color = ft.Colors.RED
+                mensaje_texto.visible = True
                 page.update()
                 return
         
         fecha_inicio = edit_datepicker_inicio.value if edit_radio_periodo.value == "fechas" else None
         fecha_fin = edit_datepicker_fin.value if edit_radio_periodo.value == "fechas" else None
         periodo_texto = "Todo el semestre" if edit_radio_periodo.value == "semestre" else f"{fecha_inicio} a {fecha_fin}"
+        # Combinar curso año y materia para actualizar
+        curso_combined = f"{edit_dropdown_curso_ano.value} - {edit_textfield_materia.value.strip()}"
         
         try:
             app.actualizar_reserva(
@@ -1198,7 +1370,7 @@ def main(page: ft.Page):
                 turno=edit_dropdown_turno.value,
                 docente=edit_textfield_docente.value,
                 carrera=edit_dropdown_carrera.value,
-                curso=edit_textfield_curso.value,
+                curso=curso_combined,
                 horario=edit_textfield_horario.value,
                 periodo=periodo_texto,
                 fecha_inicio=fecha_inicio,
@@ -1207,11 +1379,13 @@ def main(page: ft.Page):
             
             mensaje_texto.value = "✅ Reserva actualizada exitosamente!"
             mensaje_texto.color = ft.Colors.GREEN
+            mensaje_texto.visible = True
             mostrar_reservas()
             
         except Exception as ex:
             mensaje_texto.value = f"❌ Error al actualizar: {str(ex)}"
             mensaje_texto.color = ft.Colors.RED
+            mensaje_texto.visible = True
             page.update()
     
     def mostrar_nueva_reserva():
@@ -1248,7 +1422,14 @@ def main(page: ft.Page):
                 
                 ft.Container(content=textfield_docente, padding=ft.padding.only(bottom=15)),
                 ft.Container(content=dropdown_carrera, padding=ft.padding.only(bottom=15)),
-                ft.Container(content=textfield_curso, padding=ft.padding.only(bottom=15)),
+                ft.Container(
+                    content=ft.Row([
+                        ft.Container(content=dropdown_curso_ano, width=200),
+                        ft.Container(width=20),
+                        ft.Container(content=textfield_materia, expand=1),
+                    ]),
+                    padding=ft.padding.only(bottom=15)
+                ),
                 ft.Container(content=textfield_horario, padding=ft.padding.only(bottom=20)),
                 
                 ft.Container(
@@ -1269,7 +1450,7 @@ def main(page: ft.Page):
                         ft.Container(content=datepicker_fin, expand=1),
                     ]),
                     padding=ft.padding.only(bottom=25),
-                    visible=datepicker_inicio.visible
+                    visible=True
                 ),
                 
                 ft.Container(
@@ -1300,7 +1481,7 @@ def main(page: ft.Page):
                     bgcolor=ft.Colors.GREY_50,
                     border_radius=8,
                     border=ft.border.all(1, ft.Colors.GREY_300),
-                    visible=bool(mensaje_texto.value)
+                    visible=True
                 )
             ]),
             padding=30
@@ -1335,7 +1516,15 @@ def main(page: ft.Page):
         edit_dropdown_turno.value = turno
         edit_textfield_docente.value = docente
         edit_dropdown_carrera.value = carrera
-        edit_textfield_curso.value = curso
+        # Separar el campo 'curso' guardado en DB en año y materia (formato esperado: "AÑO - MATERIA")
+        if curso and " - " in curso:
+            year, materia = curso.split(" - ", 1)
+            edit_dropdown_curso_ano.value = year
+            edit_textfield_materia.value = materia
+        else:
+            edit_dropdown_curso_ano.value = None
+            edit_textfield_materia.value = curso or ""
+
         edit_textfield_horario.value = horario
         
         if "semestre" in periodo:
@@ -1395,7 +1584,14 @@ def main(page: ft.Page):
                 
                 ft.Container(content=edit_textfield_docente, padding=ft.padding.only(bottom=15)),
                 ft.Container(content=edit_dropdown_carrera, padding=ft.padding.only(bottom=15)),
-                ft.Container(content=edit_textfield_curso, padding=ft.padding.only(bottom=15)),
+                ft.Container(
+                    content=ft.Row([
+                        ft.Container(content=edit_dropdown_curso_ano, width=200),
+                        ft.Container(width=20),
+                        ft.Container(content=edit_textfield_materia, width=300),
+                    ]),
+                    padding=ft.padding.only(bottom=15)
+                ),
                 ft.Container(content=edit_textfield_horario, padding=ft.padding.only(bottom=20)),
                 
                 ft.Container(
@@ -1416,7 +1612,7 @@ def main(page: ft.Page):
                         ft.Container(content=edit_datepicker_fin, expand=1),
                     ]),
                     padding=ft.padding.only(bottom=25),
-                    visible=edit_datepicker_inicio.visible
+                    visible=True
                 ),
                 
                 ft.Container(
@@ -1447,7 +1643,7 @@ def main(page: ft.Page):
                     bgcolor=ft.Colors.GREY_50,
                     border_radius=8,
                     border=ft.border.all(1, ft.Colors.GREY_300),
-                    visible=bool(mensaje_texto.value)
+                    visible=True
                 )
             ]),
             padding=30
